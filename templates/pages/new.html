@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel='stylesheet' href='https://fonts.googleapis.com/css?family=Raleway'>
+    <link rel='stylesheet' href='https://fonts.googleapis.com/icon?family=Material+Icons'>
+    <link rel="stylesheet" href="{% static 'css/style_P.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <title>Question Designer</title>
+
+</head>
+<body>
+        <nav>
+            <ul>
+                <li>
+                    Questionniare Submission Form
+                </li>
+                
+            </ul>
+        </nav>
+    <!-- </div> -->
+    <div class="Container-div">
+        <fieldset>
+            <form action="#" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="Industry_Type">
+                    <input type="file" name="file" id="actual-btn" hidden/>
+
+                    <label for="actual-btn" class="file-label">Upload Questionnaire</label>
+
+                    <!-- name of file chosen -->
+
+
+                    <span id="file-chosen">No file chosen</span>
+                </div>
+                <hr/>
+                <div class="Problem_Type">
+                    <label>Problem Statement:</label>
+                    <textarea class="inp_text" name="statement" cols="2"></textarea>
+                </div>
+                <hr/>
+                <div class="Question_type_lib">
+                    <div class="Question_container_Q" id="data-list" >
+<!--                        content from ajax-->
+                    </div>
+                    <div class="add_new">
+                        <button type="button" class="addN">Add Question</button>
+                    </div>
+
+                    
+                </div>
+                <div class="add_submit">
+                    <button type="submit" id="sub_res">Submit</button>
+                </div>
+            </form>
+        </fieldset>
+    </div>
+<script>
+    const actualBtn = document.getElementById('actual-btn');
+    const fileChosen = document.getElementById('file-chosen');
+    actualBtn.addEventListener('change', function(){
+    fileChosen.textContent = this.files[0].name
+    file=this.files[0]
+    if (file) {
+        let formData = new FormData();
+        formData.append("file", file);
+        let csrfToken = $("[name=csrfmiddlewaretoken]").val();
+        $.ajax({
+            url: "/",
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            headers: { "X-CSRFToken": csrfToken },
+            success: function(response) {
+                console.log("Data get successfully.");
+                $("#item-list").empty();
+                var dataHtml = '<h3 style="display:flex;justify-content: center; color: black;">Survey Questions</h3>';
+                let i =0;
+                $.each(response.data_list, function(index, data) {
+                    dataHtml+='<div  class="S_Q_Set_N">\
+                                <div class="Que_text">\
+                                    <label>Question Label:</label>\
+                                    <div style="display: flex;width: 100%;" class="new_d">\
+                                        <input type="text" name="QT_' + i + '"  value="' + data.text + '" class="question_label_text_N">\
+                                        <select name="SECTION_TYPE_' + i + '" class="MQ_TYPE_Second">\
+                                            <option value="">Select Question Section</option>\
+                                            <option value="1">Screener</option>\
+                                            <option value="2">Main</option>\
+                                            <option value="3">Demographic</option>\
+                                        </select>\
+                                        <div class="Sel_Cat"  style="display:none;">\
+                                            <button Type="button" class="category_selection">Please Select Question Category</button>\
+                                            <ul class="Cat_show"  style="display:none;">\
+                                                <li class="cate_check_N"><input type="checkbox" name="checks_' + i + '" value="prd_usage" class="Q_C_check"/><p class="cate_text">Product/Service Usage</p></li>\
+                                                <li class="cate_check_N"><input type="checkbox" name="checks_' + i + '" value="attitude_opinion" class="Q_C_check"/><p class="cate_text">Market Trends and Industry Analysis</p></li>\
+                                                <li class="cate_check_N"><input type="checkbox" name="checks_' + i + '" value="behaviour" class="Q_C_check"/><p class="cate_text">Customer Satisfaction</p></li>\
+                                                <li class="cate_check_N"><input type="checkbox" name="checks_' + i + '" value="awareness" class="Q_C_check"/><p class="cate_text">Purchase Behavior</p></li>\
+                                                <li class="cate_check_N"><input type="checkbox" name="checks_' + i + '" value="loyality" class="Q_C_check"/><p class="cate_text">Price and Value Perception</p></li>\
+                                                <li class="cate_check_N"><input type="checkbox" name="checks_' + i + '" value="loyality" class="Q_C_check"/><p class="cate_text">Brand Awareness</p></li>\
+                                                <li class="cate_check_N"><input type="checkbox" name="checks_' + i + '" value="feedback" class="Q_C_check"/><p class="cate_text">Brand Perception/Association</p></li>\
+                                                <li class="cate_check_N"><input type="checkbox" name="checks_' + i + '" value="competitive_comparison" class="Q_C_check"/><p class="cate_text">Advertising and Marketing Effectiveness</p></li>\
+                                                <li class="cate_check_N"><input type="checkbox" name="checks_' + i + '" value="service" class="Q_C_check"/><p class="cate_text">New Product Development</p></li>\
+                                                <li class="cate_check_N"><input type="checkbox" name="checks_' + i + '" value="product" class="Q_C_check"/><p class="cate_text">Market Segmentation</p></li>\
+                                                <li class="cate_check_N"><input type="checkbox" name="checks_' + i + '" value="open_end" class="Q_C_check"/><p class="cate_text">Customer Feedback</p></li>\
+                                                <li class="cate_check_N"><input type="checkbox" name="checks_' + i + '" value="future_expectation" class="Q_C_check"/><p class="cate_text">Competitor Analysis</p></li>\
+                                                <li class="cate_check_N"><input type="checkbox" name="checks_' + i + '" value="pricing_perception" class="Q_C_check"/><p class="cate_text">Market Entry and Expansion</p></li>\
+                                                <li class="cate_check_N"><input type="checkbox" name="checks_' + i + '" value="product_id" class="Q_C_check"/><p class="cate_text">Expansion feasibility studies</p></li>\
+                                                <li class="cate_check_N"><input type="checkbox" name="checks_' + i + '" value="media_usage" class="Q_C_check"/><p class="cate_text">Distribution Channels</p></li>\
+                                                <li class="cate_check_N"><input type="checkbox" name="checks_' + i + '" value="media_usage" class="Q_C_check"/><p class="cate_text">Consumer Behavior and Preferences</p></li>\
+                                                <li class="cate_check_N"><input type="checkbox" name="checks_' + i + '" value="media_usage" class="Q_C_check"/><p class="cate_text">Regulatory and Compliance Issues</p></li>\
+                                                <li class="cate_check_N"><input type="checkbox" name="checks_' + i + '" value="media_usage" class="Q_C_check"/><p class="cate_text">Market Size and Growth Potential</p></li>\
+                                                <li class="cate_check_N"><input type="checkbox" name="checks_' + i + '" value="media_usage" class="Q_C_check"/><p class="cate_text">Psychographics</p></li>\
+                                                <li class="cate_check_N"><input type="checkbox" name="checks_' + i + '" value="media_usage" class="Q_C_check"/><p class="cate_text">Technology Adoption</p></li>\
+                                                <li class="cate_check_N"><input type="checkbox" name="checks_' + i + '" value="media_usage" class="Q_C_check"/><p class="cate_text">Environmental and Social Responsibility</p></li>\
+                                            </ul>\
+                                        </div>\
+                                    </div>\
+                            <div class="show_row_option show_row_option_New">\
+                                <label style="margin-left: 5px;">Row option:</label>\
+                                <div class="S_R_Row">\
+                                    <textarea cols="5" name="row_' + i + '" class="get_screener_row" style="width: 50%; height: 155px; margin-top: 20px;outline:none;border:none;border-radius:5px;">' + data.row + '</textarea>\
+                                </div>\
+                            </div>\
+                            <div class="show_column_option">\
+                                <label style="margin-left: 5px;">Column option:</label>\
+                                <div class="S_C_Col">\
+                                    <textarea cols="5" name="col_' + i + '" class="get_screener_column_text" style="width: 50%; height: 155px; margin-top: 20px;outline:none;border:none;border-radius:5px;">' + data.col + '</textarea>\
+                                </div>\
+                            </div>\
+                            <hr/>\
+                           </div>\
+                        </div>'
+                    i+=1
+                });
+                $("#data-list").html(dataHtml);
+                $(document).ready(function(){
+
+                    $('.S_Q_Set_N').each(function(){
+                        $(this).find('.Que_text .new_d').find('.MQ_TYPE_Second').on("change",function(){
+                            let value = $(this).find(':selected').val();
+                            if (value == '2')
+                            {
+                                $(this).next().css('display','block');
+
+                            }
+                            else
+                            {
+                                $(this).next().css('display','none');
+                            }
+                        });
+
+                    });
+
+                });
+                $('.category_selection:eq(0)').on("click",function(){
+                    // alert('Hello')
+                    if ($(this).next('.Cat_show').is(':hidden'))
+                    {
+
+                        $(this).next('.Cat_show').css('display','block');
+                    }
+                    else  if (!$(this).next('.Cat_show').is(':hidden'))
+                    {
+                        $(this).next('.Cat_show').css('display','none');
+                    }
+
+                });
+            },
+            error: function(error) {
+                $("#result").html("Error uploading file.");
+            }
+        });
+
+    } else {
+        $("#result").html("No file selected.");
+    }
+    })
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</body>
+</html>
